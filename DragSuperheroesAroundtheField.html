@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="soccer.css">
+</head>
+
+<body>
+
+  <h2>Place superheroes around the soccer field.</h2>
+
+  <p>Superheroes and the ball are elements with the class "draggable". Make them really draggable.</p>
+
+  <p>Important: limit dragging by the window. If a draggable reaches window top or bottom, then the page should scroll to let us drag it further.</p>
+
+  <p>If your screen is big enough to fit the whole document -- make the window smaller to get vertical scrolling, so that you could test it.</p>
+
+  <p>In this task it's enough to handle vertical scrolling. There's no horizontal scrolling usually, and it's handled the similar way if needed.</p>
+
+  <p>And one more thing: heroes may never leave the page. If they reach the edge of the document, no dragging outside of it.</p>
+
+  <div id="field">
+
+  </div>
+  <div class="hero draggable" id="hero1"></div>
+  <div class="hero draggable" id="hero2"></div>
+  <div class="hero draggable" id="hero3"></div>
+  <div class="hero draggable" id="hero4"></div>
+  <div class="hero draggable" id="hero5"></div>
+  <div class="hero draggable" id="hero6"></div>
+
+  <img src="https://en.js.cx/clipart/ball.svg" class="draggable">
+  <div style="clear:both"></div>
+  <script>
+    class HoverIntent {
+  constructor({
+    sensitivity = 0.1, 
+    interval = 100, 
+    element,
+    over,
+    out,
+  }) {
+    this.sensitivity = sensitivity;
+    this.interval = interval;
+    this.elem = element;
+    this.over = over;
+    this.out = out;
+    this.onMouseMove = this.onMouseMove.bind(this);
+    this.onMouseOver = this.onMouseOver.bind(this);
+    this.onMouseOut = this.onMouseOut.bind(this);
+    this.trackSpeed = this.trackSpeed.bind(this);
+    element.addEventListener("mouseover", this.onMouseOver);
+    element.addEventListener("mouseout", this.onMouseOut);
+  }
+
+  onMouseOver(event) {
+    if (this.isOverElement) {
+      return;
+    }
+    this.isOverElement = true;
+    this.prevX = event.pageX;
+    this.prevY = event.pageY;
+    this.prevTime = Date.now();
+
+    elem.addEventListener("mousemove", this.onMouseMove);
+    this.checkSpeedInterval = setInterval(this.trackSpeed, this.interval);
+  }
+  onMouseOut(event) {
+    if (!event.relatedTarget || !elem.contains(event.relatedTarget)) {
+      this.isOverElement = false;
+      this.element.removeEventListener("mousemove", this.onMouseMove);
+      clearInterval(this.checkSpeedInterval);
+      if (this.isHover) {
+        this.out.call(this.element, event);
+        this.isHover = false;
+      }
+    }
+  }
+  onMouseMove(event) {
+    this.lastX = event.pageX;
+    this.lastY = event.pageY;
+    this.lastTime = Date.now();
+  }
+  trackSpeed() {
+    let speed;
+    if (!this.lastTime || this.lastTime == this.prevTime) {
+      speed = 0;
+    } else {
+      speed =
+        Math.sqrt(
+          Math.pow(this.prevX - this.lastX, 2) +
+            Math.pow(this.prevY - this.lastY, 2)
+        ) /
+        (this.lastTime - this.prevTime);
+    }
+
+    if (speed < this.sensitivity) {
+      clearInterval(this.checkSpeedInterval);
+      this.isHover = true;
+      this.over.call(this.element, event);
+    } else {
+      this.prevX = this.lastX;
+      this.prevY = this.lastY;
+      this.prevTime = this.lastTime;
+    }
+  }
+
+  destroy() {
+    elem.removeEventListener("mousemove", this.onMouseMove);
+    elem.removeEventListener("mouseover", this.onMouseOver);
+    elem.removeEventListener("mouseout", this.onMouseOut);
+  }
+}
+
+  </script>
+</body>
+</html>
